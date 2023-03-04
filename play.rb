@@ -12,11 +12,6 @@ class Mastermind
   def start
     instruction()
     player_selection()
-    code_breaker()
-  end
-
-  def new_game
-    player_selection()
   end
 
   def instruction
@@ -54,7 +49,16 @@ class Mastermind
   end
 
   def code_maker
+    computer_code = []
+    puts "Please enter a 4-digit 'master code' for the computer to break"
+    code_input = gets.chomp
     
+    num1 = rand(1..3)
+    num2 = rand(4..6)
+    computer_code = [num1,num1,num2,num2]
+    print computer_code
+
+
   end
 
   def code_breaker
@@ -82,7 +86,7 @@ class Mastermind
         answer = gets.chomp
 
         if answer == 'y'
-          new_game()
+          player_selection()
         else
             exit
         end
