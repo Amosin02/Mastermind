@@ -7,6 +7,9 @@ include Color
 class Mastermind
   def initialize 
     @@code = []
+    @@computer_code = []
+    @@guess = 1
+    @@clue = []
   end
 
   def start
@@ -34,12 +37,11 @@ class Mastermind
         puts "Press '1' to be the code MAKER"
         puts "Press '2' to be the code BREAKER"
         choice = gets.chomp
+        initialize()
         if choice == '1'
-            initialize()
             code_maker()
             break
         elsif choice == '2'
-            initialize()
             randomizer()
             code_breaker()
             break
@@ -48,54 +50,48 @@ class Mastermind
   end
 
   def code_maker
+    now = 0
+
     while true
-      computer_code = []
       puts "Please enter a 4-digit (1-6) 'master code' for the computer to break"
       code_input = gets.chomp
       @@code = code_input.chars.map(&:to_i)
-      code_array = code_input.chars.map(&:to_i)
-      if code_array.all? { |a| a.between?(1, 6) }
+
+      if @@code.all? { |a| a.between?(1, 6) } && @@code.length == 4
         num1 = 1
         num2 = 2
-        computer_code = [num1,num1,num2,num2]
-        print_code(computer_code)
-        break
+        @@computer_code = [num1,num1,num2,num2] # get the clues so that you can arrange
+        # things properly and add random numbers properly.
+
+        while now < 10
+          print_code(@@computer_code)
+          puts "#{@@clue}"
+          now += 1
+          @@clue = [] # Use the clue to to either generate new numbers or move the numbers
+        end
+        exit
+
       else 
         print "Error: "
       end
     end
-  end
 
-  def print_code(code)
-    print "#{number_colors("#{code[0]}")} #{number_colors("#{code[1]}")} #{number_colors("#{code[2]}")} #{number_colors("#{code[3]}")} "
-    print "    Clues: "
-
-    @@code.each_with_index do |z, ind|
-      if z == code[ind]
-        print clue_colors('?')
-      elsif code.include?(z)
-        print clue_colors('*')
-      end
-    end
-
-    puts ''
   end
 
   def code_breaker
-    guess = 1
     while true
       code_guess = []
-      print @@code
+      print @@code #remove this when it's done
       puts "\n\n"
-      puts "Turn ##{guess}: Type in four numbers (1-6) to guess code, or 'q' to quit game."
+      puts "Turn ##{@@guess}: Type in four numbers (1-6) to guess code, or 'q' to quit game."
       type_code = gets.chomp
       code_guess = type_code.to_s.split('').map(&:to_i)
       if type_code == 'q'
         exit
       elsif code_guess.all? { |a| a.between?(1, 6) }
         checker(code_guess)
-        max?(guess)
-        guess += 1
+        max?(@@guess)
+        @@guess += 1
       else 
         print "Error: "
       end
@@ -126,6 +122,23 @@ class Mastermind
       else
           exit
       end
+  end
+
+  def print_code(code)
+    print "#{number_colors("#{code[0]}")} #{number_colors("#{code[1]}")} #{number_colors("#{code[2]}")} #{number_colors("#{code[3]}")} "
+    print "    Clues: "
+
+    @@code.each_with_index do |z, ind|
+      if z == code[ind]
+        @@clue << '?'
+        print clue_colors('?')
+      elsif code.include?(z)
+        @@clue << '*'
+        print clue_colors('*')
+      end
+    end
+
+    puts ''
   end
 end
 
