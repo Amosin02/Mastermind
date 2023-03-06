@@ -10,6 +10,7 @@ class Mastermind
     @@computer_code = []
     @@guess = 1
     @@clue = []
+    @@possible_numbers = []
   end
 
   def start
@@ -49,11 +50,39 @@ class Mastermind
     end
   end
 
+  def path1() # '?' (1 correct number in the correct location)
+    #@@computer_code.slice!(0,4-counter)
+    #print @@computer_code
+    #y = 0
+    #while y < 4-counter
+    #  @@computer_code << rand(1..6)
+    #  y += 1
+    #end
+    #puts "naabot" # Find an algorithm that you can use guess the code
+    y = 0
+    y+1
+    print y
+  end
+
+  def path2(counter) # '*' (1 correct number in the wrong location)
+    if counter == 2
+      @@computer_code[1] += 2
+      @@computer_code[3] += 1
+    elsif counter == 1
+      @@computer_code[2] += 1
+      @@computer_code[3] += 1
+    elsif counter == 3
+      @@computer_code[3] += 1
+    end
+    @@computer_code.map! { |n| n > 6 ? n-6 : n}
+    print @@computer_code
+  end 
+
   def code_maker
     now = 0
 
     while true
-      puts "Please enter a 4-digit (1-6) 'master code' for the computer to break"
+      puts "\nPlease enter a 4-digit (1-6) 'master code' for the computer to break"
       code_input = gets.chomp
       @@code = code_input.chars.map(&:to_i)
 
@@ -63,8 +92,20 @@ class Mastermind
         @@computer_code = [num1,num1,num2,num2] # get the clues so that you can arrange
         # things properly and add random numbers properly.
 
-        while now < 10
+        while now < 10 # issue for now is pag walang '*'
           print_code(@@computer_code)
+          if @@clue.length() == 4
+            path1()
+          else 
+            if @@clue.include?("*") # '*' (1 correct number in the wrong location)
+              counter = @@clue.count('*')
+              freeze = @@clue.count('?')
+              path2(counter)
+            else 
+              @@computer_code.map! { |n| n+2 }
+            end
+          end
+          
           puts "#{@@clue}"
           now += 1
           @@clue = [] # Use the clue to to either generate new numbers or move the numbers
