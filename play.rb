@@ -51,20 +51,23 @@ class Mastermind
   end
 
   def path1() # '?' (1 correct number in the correct location)
-    #@@computer_code.slice!(0,4-counter)
-    #print @@computer_code
-    #y = 0
-    #while y < 4-counter
-    #  @@computer_code << rand(1..6)
-    #  y += 1
-    #end
-    #puts "naabot" # Find an algorithm that you can use guess the code
-    y = 0
-    y+1
-    print y
+    puts "reached"
+    counter = @@clue.count("*")
+    freeze = @@clue.count("?")
+    if counter == 2 && freeze == 2
+      n = 0
+      @@clue.map.with_index {|f,i| f == "?" ? n = i : i}
+      x = @@computer_code[n]
+      @@computer_code = [x,x,x,x]
+      puts "The code is #{number_colors("#{@@computer_code[0]}")} #{number_colors("#{@@computer_code[1]}")} #{number_colors("#{@@computer_code[2]}")} #{number_colors("#{@@computer_code[3]}")}"
+      comp_checker(@@computer_code)
+    end
+
+    
   end
 
-  def path2(counter) # '*' (1 correct number in the wrong location)
+  def path2(counter,freeze) # '*' (1 correct number in the wrong location)
+    puts "Partial: #{counter} Right place: #{freeze}"
     if counter == 2
       @@computer_code[1] += 2
       @@computer_code[3] += 1
@@ -97,10 +100,10 @@ class Mastermind
           if @@clue.length() == 4
             path1()
           else 
-            if @@clue.include?("*") # '*' (1 correct number in the wrong location)
-              counter = @@clue.count('*')
-              freeze = @@clue.count('?')
-              path2(counter)
+            if @@clue.include?("*") || @@clue.include?("?") # '*' (1 correct number in the wrong location)
+              counter = @@clue.count("*")
+              freeze = @@clue.count("?")
+              path2(counter,freeze)
             else 
               @@computer_code.map! { |n| n+2 }
             end
@@ -153,6 +156,13 @@ class Mastermind
         new_game?()
     end
     print_code(code)
+  end
+
+  def comp_checker(code)
+    if @@code == code
+      puts "\nYou lost! The computer won!"
+      new_game?()
+    end
   end
 
   def new_game?()
