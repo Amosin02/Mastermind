@@ -51,7 +51,7 @@ class Mastermind
   end
 
   def path1() # '?' (1 correct number in the correct location)
-    puts "reached"
+    #comp_checker(@@computer_code)
     counter = @@clue.count("*")
     freeze = @@clue.count("?")
     if counter == 2 && freeze == 2
@@ -59,15 +59,16 @@ class Mastermind
       @@clue.map.with_index {|f,i| f == "?" ? n = i : i}
       x = @@computer_code[n]
       @@computer_code = [x,x,x,x]
-      puts "The code is #{number_colors("#{@@computer_code[0]}")} #{number_colors("#{@@computer_code[1]}")} #{number_colors("#{@@computer_code[2]}")} #{number_colors("#{@@computer_code[3]}")}"
+      puts "\n#{number_colors("#{@@computer_code[0]}")} #{number_colors("#{@@computer_code[1]}")} #{number_colors("#{@@computer_code[2]}")} #{number_colors("#{@@computer_code[3]}")} is the code"
       comp_checker(@@computer_code)
+    elsif counter == 4
+      @@computer_code[0], @@computer_code[1] = @@computer_code[1], @@computer_code[0]
     end
-
     
   end
 
   def path2(counter,freeze) # '*' (1 correct number in the wrong location)
-    puts "Partial: #{counter} Right place: #{freeze}"
+    #puts "Partial: #{counter} Right place: #{freeze}"
     if counter == 2
       @@computer_code[1] += 2
       @@computer_code[3] += 1
@@ -76,9 +77,16 @@ class Mastermind
       @@computer_code[3] += 1
     elsif counter == 3
       @@computer_code[3] += 1
+    elsif freeze == 2
+      @@computer_code[2] = rand(1..6)
+      @@computer_code[3] = rand(1..6)
+    elsif  freeze == 1
+      @@computer_code[2] = rand(1..6)
+      @@computer_code[3] = rand(1..6)
+      @@computer_code[1] = rand(1..6)
     end
     @@computer_code.map! { |n| n > 6 ? n-6 : n}
-    print @@computer_code
+    #print @@computer_code
   end 
 
   def code_maker
@@ -109,11 +117,11 @@ class Mastermind
             end
           end
           
-          puts "#{@@clue}"
+          #puts "#{@@clue}"
           now += 1
           @@clue = [] # Use the clue to to either generate new numbers or move the numbers
         end
-        exit
+        comp_checker(@@computer_code)
 
       else 
         print "Error: "
@@ -125,8 +133,8 @@ class Mastermind
   def code_breaker
     while true
       code_guess = []
-      print @@code #remove this when it's done
-      puts "\n\n"
+      #print @@code #remove this when it's done
+      puts "\n"
       puts "Turn ##{@@guess}: Type in four numbers (1-6) to guess code, or 'q' to quit game."
       type_code = gets.chomp
       code_guess = type_code.to_s.split('').map(&:to_i)
@@ -152,7 +160,8 @@ class Mastermind
 
   def checker(code)
     if @@code == code
-        puts "\nYou broke the code! Congratulations, you win!"
+        print "\n#{number_colors("#{code[0]}")} #{number_colors("#{code[1]}")} #{number_colors("#{code[2]}")} #{number_colors("#{code[3]}")} "
+        puts "You broke the code! Congratulations, you win!"
         new_game?()
     end
     print_code(code)
@@ -161,6 +170,9 @@ class Mastermind
   def comp_checker(code)
     if @@code == code
       puts "\nYou lost! The computer won!"
+      new_game?()
+    else
+      puts "\nYou won! The computer can't guess your code"
       new_game?()
     end
   end
@@ -176,7 +188,7 @@ class Mastermind
   end
 
   def print_code(code)
-    print "#{number_colors("#{code[0]}")} #{number_colors("#{code[1]}")} #{number_colors("#{code[2]}")} #{number_colors("#{code[3]}")} "
+    print "\n#{number_colors("#{code[0]}")} #{number_colors("#{code[1]}")} #{number_colors("#{code[2]}")} #{number_colors("#{code[3]}")} "
     print "    Clues: "
 
     @@code.each_with_index do |z, ind|
